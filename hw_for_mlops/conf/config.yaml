@@ -1,0 +1,20 @@
+model:
+  dropout: 0.23
+  out_dim: 10
+  save_name: bin/best_model.xyz
+
+train:
+  num_epoch: 3
+  lr: 0.001
+  count_data: 30000
+  random_state: 57
+  test_size: 0.2
+  device: cpu
+  X_path: data/train-images.gz
+  y_path: data/train-labels.gz
+
+test:
+  save_name: bin/test_results.csv
+  device: cpu
+  X_path: data/test-images.gz
+  y_path: data/test-labels.gz

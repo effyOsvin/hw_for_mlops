@@ -3,14 +3,14 @@ import torch.nn.functional as F
 
 
 class ConvLinear(nn.Module):
-    def __init__(self, dropout=0.23):
+    def __init__(self, dropout=0.23, out_dim=10):
         super().__init__()
         self.conv1 = nn.Conv2d(1, 16, 5)
         self.pool1 = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(16, 32, 5)
         self.pool2 = nn.MaxPool2d(2, 2)
         self.fc1 = nn.Linear(512, 320)
-        self.fc3 = nn.Linear(320, 10)
+        self.fc3 = nn.Linear(320, out_dim)
         self.dropout1 = nn.Dropout(p=dropout)
 
     def forward(self, x):

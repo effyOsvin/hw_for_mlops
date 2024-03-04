@@ -16,16 +16,12 @@ def load_mnist_labels(filename):
     return np.copy(data)
 
 
-def load_data(train=True):
-    if train:
-        os.system("dvc pull " + "data/train-images.gz" + ".dvc")
-        os.system("dvc pull " + "data/train-labels.gz" + ".dvc")
-        X = load_mnist_images("data/train-images.gz")
-        y = load_mnist_labels("data/train-labels.gz")
-    else:
-        os.system("dvc pull " + "data/test-images.gz" + ".dvc")
-        os.system("dvc pull " + "data/test-labels.gz" + ".dvc")
-        X = load_mnist_images("data/test-images.gz")
-        y = load_mnist_labels("data/test-labels.gz")
+def load_data(X_path, y_path):
+    if not os.path.exists(X_path):
+        os.system("dvc pull " + X_path + ".dvc")
+    if not os.path.exists(y_path):
+        os.system("dvc pull " + y_path + ".dvc")
+    X = load_mnist_images(X_path)
+    y = load_mnist_labels(y_path)
 
     return X, y
