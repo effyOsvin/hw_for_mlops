@@ -1,11 +1,14 @@
+import os
+
 import numpy as np
 import torch
 from hw_for_mlops.models.model import ConvLinear
 
 
 def load_model(filename):
+    os.system("dvc pull " + filename + ".dvc")
     [model_state_dict, model_parameters] = torch.load(filename)
-    model = ConvLinear()
+    model = ConvLinear(model_parameters["p"])
     model.load_state_dict(model_state_dict)
     return model
 

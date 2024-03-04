@@ -1,5 +1,4 @@
-import sys
-
+import numpy as np
 import pandas as pd
 import torch
 import torch.utils.data
@@ -9,14 +8,11 @@ from tools.load_data import load_data
 
 
 def infer():
-    model_name = "best_model.xyz"
-    save_name = "test_results.csv"
-    if len(sys.argv) > 1:
-        model_name = sys.argv[1]
-        if len(sys.argv) > 2:
-            save_name = sys.argv[2]
+    model_name = "bin/best_model.xyz"
+    save_name = "bin/test_results.csv"
+
     X_test, y_test = load_data(train=False)
-    test_loader = get_dataloader(X_test, y_test)
+    test_loader = get_dataloader(np.array(X_test), np.array(y_test))
 
     model = load_model(model_name)
     device = torch.device("cpu")
