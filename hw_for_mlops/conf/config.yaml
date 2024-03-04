@@ -1,7 +1,8 @@
 model:
   dropout: 0.23
   out_dim: 10
-  save_name: bin/best_model.xyz
+  save_name: best_model.xyz
+  save_path: ./bin/
 
 train:
   num_epoch: 3
@@ -12,9 +13,17 @@ train:
   device: cpu
   X_path: data/train-images.gz
   y_path: data/train-labels.gz
+  log_every_n_steps: 10
+  num_workers: 1
+  batch_size: 32
+  optimizer: adam
 
 test:
   save_name: bin/test_results.csv
   device: cpu
   X_path: data/test-images.gz
   y_path: data/test-labels.gz
+
+logger:
+  experiment_name: mnist_1
+  tracking_uri: http://localhost:8888

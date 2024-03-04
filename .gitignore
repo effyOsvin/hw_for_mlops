@@ -132,3 +132,10 @@ dmypy.json
 *.iml
 .idea
 out
+
+# logging
+.logs**
+outputs**
+mlruns**
+/mlflow
+/mlartifacts

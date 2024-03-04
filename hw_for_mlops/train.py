@@ -1,43 +1,46 @@
 import hydra
+import lightning.pytorch as pl
 import torch
-import torch.nn as nn
 import torch.utils.data
 from models.model import ConvLinear
 from omegaconf import DictConfig
-from sklearn.model_selection import train_test_split
-from tools.get_dataloader import get_dataloader
-from tools.load_data import load_data
-from tools.train_model import save_all, train_model
+from tools.data import MyDataModule
+from tools.save_model import save_model
 
 
 @hydra.main(config_path="conf", config_name="config", version_base="1.3")
 def train(cfg: DictConfig):
-    X, y = load_data(cfg.train.X_path, cfg.train.y_path)
-    X_train, X_val, y_train, y_val = train_test_split(
-        X[: cfg.train.count_data],
-        y[: cfg.train.count_data],
-        test_size=cfg.train.test_size,
-        random_state=cfg.train.random_state,
-    )
-    train_loader = get_dataloader(X_train, y_train)
-    val_loader = get_dataloader(X_train, y_train)
-
-    model_parameters = {"dropout": cfg.model.dropout, "out_dim": cfg.model.out_dim}
+    torch.set_float32_matmul_precision("medium")
+    dm = MyDataModule(cfg=cfg.train)
     model = ConvLinear(cfg.model.dropout, cfg.model.out_dim)
-    opt = torch.optim.Adam(model.parameters(), lr=cfg.train.lr)
-    criterion = nn.CrossEntropyLoss()
-    train_model(
-        model,
-        opt,
-        train_loader,
-        val_loader,
-        criterion,
-        cfg.train.num_epoch,
-        cfg.train.device,
-        verbose=True,
-    )
+    loggers = [
+        pl.loggers.MLFlowLogger(
+            experiment_name=cfg.logger.experiment_name,
+            tracking_uri=cfg.logger.tracking_uri,
+            artifact_location="conf/config.yaml",
+        )
+    ]
+    loggers[0].log_hyperparams(cfg)
+    callbacks = [
+        pl.callbacks.LearningRateMonitor(logging_interval="step"),
+        pl.callbacks.DeviceStatsMonitor(),
+        pl.callbacks.RichModelSummary(),
+    ]
 
-    save_all(model, model_parameters, cfg.model.save_name)
+    trainer = pl.Trainer(
+        log_every_n_steps=cfg.train.log_every_n_steps,
+        max_epochs=cfg.train.num_epoch,
+        logger=loggers,
+        callbacks=callbacks,
+    )
+    trainer.fit(model, datamodule=dm)
+
+    save_model(
+        model,
+        cfg.model,
+        save_path=cfg.model.save_path,
+        save_name=cfg.model.save_name,
+    )
 
 
 if __name__ == "__main__":
