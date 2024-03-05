@@ -1,11 +1,12 @@
 import hydra
 import lightning.pytorch as pl
+import mlflow
 import torch
 import torch.utils.data
 from models.model import ConvLinear
 from omegaconf import DictConfig
 from tools.data import MyDataModule
-from tools.save_model import save_model
+from tools.save_model import convert_to_onnx, save_model
 
 
 @hydra.main(config_path="conf", config_name="config", version_base="1.3")
@@ -41,6 +42,10 @@ def train(cfg: DictConfig):
         save_path=cfg.model.save_path,
         save_name=cfg.model.save_name,
     )
+
+    mlflow.set_tracking_uri(cfg.logger.tracking_uri)
+    mlflow.set_experiment(cfg.logger.experiment_name)
+    convert_to_onnx(model=model, conf=cfg.model.model_onnx)
 
 
 if __name__ == "__main__":

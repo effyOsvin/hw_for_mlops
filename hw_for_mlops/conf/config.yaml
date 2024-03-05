@@ -3,9 +3,13 @@ model:
   out_dim: 10
   save_name: best_model.xyz
   save_path: ./bin/
+  model_name: best_model.onnx
+  model_onnx:
+    onnx_path: ./bin/best_model.onnx
+    onnx_export_path: ./bin/onnx_model
 
 train:
-  num_epoch: 3
+  num_epoch: 4
   lr: 0.001
   count_data: 30000
   random_state: 57
@@ -14,16 +18,23 @@ train:
   X_path: data/train-images.gz
   y_path: data/train-labels.gz
   log_every_n_steps: 10
-  num_workers: 1
+  num_workers: 4
   batch_size: 32
   optimizer: adam
 
-test:
+infer:
   save_name: bin/test_results.csv
   device: cpu
   X_path: data/test-images.gz
   y_path: data/test-labels.gz
+  tracking_uri: http://localhost:8880
+  port: 8880
+  batch_size: 32
+  result_path: predictions/test_result_onx.json
 
 logger:
   experiment_name: mnist_1
-  tracking_uri: http://localhost:8888
+  tracking_uri: http://localhost:8878
+
+sample:
+  shape: [2, 1, 28, 28]

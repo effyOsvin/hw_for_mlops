@@ -8,7 +8,6 @@ from hw_for_mlops.models.model import ConvLinear
 def load_model(filename):
     if not os.path.exists(filename):
         os.system("dvc pull " + filename + ".dvc")
-
     [model_state_dict, model_parameters] = torch.load(filename)
     model = ConvLinear(model_parameters["dropout"], model_parameters["out_dim"])
     model.load_state_dict(model_state_dict)
