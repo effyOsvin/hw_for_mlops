@@ -23,7 +23,7 @@ train:
   optimizer: adam
 
 infer:
-  save_name: bin/test_results.csv
+  save_name: predictions/test_results.csv
   device: cpu
   X_path: data/test-images.gz
   y_path: data/test-labels.gz
