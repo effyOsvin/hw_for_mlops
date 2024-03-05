@@ -47,4 +47,4 @@ mlflow models serve -p 8880 -m ./bin/onnx_model --env-manager=local
 python hw_for_mlops/run_server.py
 ```
 
-Предсказания хранятся
+Предсказания хранятся в predictions/test_result_onx.json
